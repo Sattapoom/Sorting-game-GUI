@@ -8,35 +8,40 @@ int[] index_space = {2,3};
 
 void shuffle_board(){
     String[] remember = new String[3];
-    int ran = (int) random(50,250);
+    int ran = (int) random(100,250);
     for(int round=0 ; round<=ran;round++){
-        String[] move_able = new String[0];
+        String[] move_able = {" "," "," "," "};
         if(index_space[0]==1){
-            move_able = append(move_able,game_board[index_space[0]-1][index_space[1]]);
-            move_able = append(move_able,game_board[index_space[0]+1][index_space[1]]);
+            move_able[0] = game_board[index_space[0]-1][index_space[1]];
+            move_able[1] = game_board[index_space[0]+1][index_space[1]];
         }
         else if(index_space[0]==0){
-            move_able = append(move_able,game_board[index_space[0]+1][index_space[1]]);
+            move_able[1] = game_board[index_space[0]+1][index_space[1]];
         }
         else if(index_space[0]==2){
-            move_able = append(move_able,game_board[index_space[0]-1][index_space[1]]);
+            move_able[0] = game_board[index_space[0]-1][index_space[1]];
         }
         if(index_space[1]==0){
-            move_able = append(move_able,game_board[index_space[0]][index_space[1]+1]);
+            move_able[3] = game_board[index_space[0]][index_space[1]+1];
         }
         else if(index_space[1]==3){
-            move_able = append(move_able,game_board[index_space[0]][index_space[1]-1]);
+            move_able[2] = game_board[index_space[0]][index_space[1]-1];
         }
         else{
-            move_able = append(move_able,game_board[index_space[0]][index_space[1]+1]);
-            move_able = append(move_able,game_board[index_space[0]][index_space[1]-1]);
+            move_able[3] = game_board[index_space[0]][index_space[1]+1];
+            move_able[2] = game_board[index_space[0]][index_space[1]-1];
         }
-        String moving = game_board[index_space[0]][index_space[1]];
-        while (moving.equals(" ") || moving.equals(remember[(round+1)%3]) || moving.equals(remember[(round+2)%3])){
-            moving = move_able[(int) random(0,5)];
+        
+        String moving = move_able[(int) random(0,4)];  
+        while (moving.equals(" ")){
+          moving = move_able[(int) random(0,4)];    
         }
-        moveChar(moving);
-        remember[round%3] = moving;
+        if( !(moving.equals(remember[0]) || moving.equals(remember[1]) || moving.equals(remember[2]))){
+          moveChar(moving);
+        }
+        if(0<(int)random(0,1)){
+          remember[round%3] = moving;
+        }
     }
 }
 
