@@ -1,3 +1,4 @@
+import java.util.Arrays;
 int size_x = 800;
 int size_y = 600;
 String[][] game_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
@@ -90,7 +91,14 @@ void moveChar(String c){
 }
 
 Boolean checkCondition(){
-  return true;
+  if (Arrays.deepEquals(game_board, sorted_board)){
+    System.out.println("WIN");
+    return true;
+  }
+  else{
+    System.out.println("NOT WIN YET");
+    return false;
+  }
 }
 
 // ********* GUI's part *********
@@ -98,6 +106,7 @@ Boolean checkCondition(){
 void setup(){
  size(800,600);
  frameRate(10);
+ shuffle_board();
 }
 
 void add_section(){
@@ -122,8 +131,10 @@ void add_section(){
 void draw(){
  background(255);
  add_section();
- if(mousePressed){
-   String c = onClick(mouseX,mouseY);
-   moveChar(c);
+if (!checkCondition()) {
+   if(mousePressed){
+     String c = onClick(mouseX,mouseY);
+     moveChar(c);
+   }
  }
 }
