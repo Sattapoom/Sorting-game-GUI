@@ -41,14 +41,52 @@ void shuffle_board(){
 
 
 String onClick(int mouse_x,int mouse_y){
+  
   int row,col;
   row = (int)mouse_y/200;
   col = (int)mouse_x/200;
+  
   return game_board[row][col];
 }
 
 void moveChar(String c){
-
+  int topIndex = index_space[0] - 1;
+  if (topIndex >= 0) {
+    if (game_board[topIndex][index_space[1]].equals(c)) {
+      game_board[topIndex][index_space[1]] = " ";
+      game_board[index_space[0]][index_space[1]] = c;
+      index_space[0] = topIndex;
+      return;
+    }
+  }
+  int bottomIndex = index_space[0] + 1;
+  if (bottomIndex <= 2) {
+    if (game_board[bottomIndex][index_space[1]].equals(c)) {
+      game_board[bottomIndex][index_space[1]] = " ";
+      game_board[index_space[0]][index_space[1]] = c;
+      index_space[0] = bottomIndex;
+      return;
+    }
+  }
+  int leftIndex = index_space[1] - 1;
+  if (leftIndex >= 0) {
+    if (game_board[index_space[0]][leftIndex].equals(c)) {
+      game_board[index_space[0]][leftIndex] = " ";
+      game_board[index_space[0]][index_space[1]] = c;
+      index_space[1] = leftIndex;
+      return;
+    }
+  }
+  int rightIndex = index_space[1] + 1;
+  if (rightIndex <= 3) {
+    if (game_board[index_space[0]][rightIndex].equals(c)) {
+      game_board[index_space[0]][rightIndex] = " ";
+      game_board[index_space[0]][index_space[1]] = c;
+      index_space[1] = rightIndex;
+      return;
+    }
+  }
+  return;
 }
 
 Boolean checkCondition(){
@@ -85,6 +123,7 @@ void draw(){
  background(255);
  add_section();
  if(mousePressed){
-   onClick(mouseX,mouseY);
+   String c = onClick(mouseX,mouseY);
+   moveChar(c);
  }
 }
