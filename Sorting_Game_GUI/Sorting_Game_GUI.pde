@@ -63,18 +63,26 @@ void setup(){
 }
 
 void add_section(){
+   for (int x = 0;x<3;x++){
+   int rowx = 0;
+   int rowy = 200 * x;
+   for (int y = 0;y<4;y++){
+     fill(255);
+     rect(rowx,rowy,200,200);
+     rowx += 200;
+   }
+ }
   for(int i = 0;i<game_board.length;i++){
     for(int j=0;j<game_board[i].length;j++){
       fill(75,120,255);
       textSize(120);
-      text(game_board[i][j],10+(100*j),100+(100*i));
+      text(game_board[i][j],65+(200*j),140+(200*i));
     }
   }
 }
 
 void draw(){
  background(255);
- 
  add_section();
  if(mousePressed){
    onClick(mouseX,mouseY);
