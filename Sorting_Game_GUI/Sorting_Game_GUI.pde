@@ -9,29 +9,29 @@ void shuffle_board(){
     String[] remember = new String[3];
     int ran = (int) random(50,250);
     for(int round=0 ; round<=ran;round++){
-        String[] move_able = {"","","",""};
+        String[] move_able = new String[0];
         if(index_space[0]==1){
-            move_able[0] = game_board[index_space[0]-1][index_space[1]];
-            move_able[1] = game_board[index_space[0]+1][index_space[1]];
+            move_able = append(move_able,game_board[index_space[0]-1][index_space[1]]);
+            move_able = append(move_able,game_board[index_space[0]+1][index_space[1]]);
         }
         else if(index_space[0]==0){
-            move_able[1] = game_board[index_space[0]+1][index_space[1]];
+            move_able = append(move_able,game_board[index_space[0]+1][index_space[1]]);
         }
         else if(index_space[0]==2){
-            move_able[0] = game_board[index_space[0]-1][index_space[1]];
+            move_able = append(move_able,game_board[index_space[0]-1][index_space[1]]);
         }
         if(index_space[1]==0){
-            move_able[3] = game_board[index_space[0]][index_space[1]+1];
+            move_able = append(move_able,game_board[index_space[0]][index_space[1]+1]);
         }
         else if(index_space[1]==3){
-            move_able[2] = game_board[index_space[0]][index_space[1]-1];
+            move_able = append(move_able,game_board[index_space[0]][index_space[1]-1]);
         }
         else{
-            move_able[3] = game_board[index_space[0]][index_space[1]+1];
-            move_able[2] = game_board[index_space[0]][index_space[1]-1];
+            move_able = append(move_able,game_board[index_space[0]][index_space[1]+1]);
+            move_able = append(move_able,game_board[index_space[0]][index_space[1]-1]);
         }
-        String moving = "";
-        while (moving.equals("") && !moving.equals(remember[(round+1)%3]) && !moving.equals(remember[(round+2)%3])){
+        String moving = game_board[index_space[0]][index_space[1]];
+        while (moving.equals(" ") || moving.equals(remember[(round+1)%3]) || moving.equals(remember[(round+2)%3])){
             moving = move_able[(int) random(0,5)];
         }
         moveChar(moving);
@@ -41,9 +41,10 @@ void shuffle_board(){
 
 
 String onClick(int mouse_x,int mouse_y){
-  
-  
-  return "something";
+  int row,col;
+  row = (int)mouse_y/200;
+  col = (int)mouse_x/200;
+  return game_board[row][col];
 }
 
 void moveChar(String c){
@@ -61,10 +62,21 @@ void setup(){
  frameRate(10);
 }
 
+void add_section(){
+  for(int i = 0;i<game_board.length;i++){
+    for(int j=0;j<game_board[i].length;j++){
+      fill(75,120,255);
+      textSize(120);
+      text(game_board[i][j],10+(100*j),100+(100*i));
+    }
+  }
+}
+
 void draw(){
  background(255);
  
- fill(0);
- noStroke();
- ellipse(random(0,width), random(0,height),size_x,size_x);
+ add_section();
+ if(mousePressed){
+   onClick(mouseX,mouseY);
+ }
 }
