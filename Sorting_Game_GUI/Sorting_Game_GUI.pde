@@ -108,7 +108,43 @@ void Manage_file(String mode){
 
 // ********* GUI's part *********
 void menu_game(){
-  return;
+  int rectcolor = 240;
+  int rectover = 200;
+  if (mouseX >= 250 && mouseX <= 550 && 
+    mouseY >= 150 && mouseY <= 250) {
+    fill(rectover);
+    rect(250,150,300,100);
+    fill(0,120,50);
+    textSize(55);
+    text("New game",260,215);
+    if(mousePressed){
+      System.out.println("hhahahahahaha");
+    }
+  }
+  else if(mouseX >= 250 && mouseX <= 550 && 
+    mouseY >= 350 && mouseY <= 450) {
+    fill(rectover);
+    rect(250,350,300,100);
+    fill(0,120,50);
+    textSize(55);
+    text("Continue",280,415);
+    if(mousePressed){
+      System.out.println("OHHHHHHHHHHHHHHHHHHHHHHHHH");
+    }
+  }
+  else if(!(mouseX >= 250 && mouseX <= 550 && 
+    mouseY >= 350 && mouseY <= 450) && 
+   !(mouseX >= 250 && mouseX <= 550 && 
+    mouseY >= 150 && mouseY <= 250)){
+  background(255);
+  fill(rectcolor);
+  rect(250,150,300,100);
+  rect(250,350,300,100);
+  fill(0,120,50);
+  textSize(55);
+  text("New game",260,215);
+  text("Continue",280,415);
+  }
 }
 
 void setup(){
