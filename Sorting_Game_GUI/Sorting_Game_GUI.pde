@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.io.File;
 
 String[][] game_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
 int[] index_space = {2,3};
@@ -126,7 +127,6 @@ void Manage_file(String mode){
   }
   else if (mode.equals("r")) {
      save = loadJSONObject("save.json");
-     
      JSONArray json_index_space = save.getJSONArray("index_space");
      index_space[0] = json_index_space.getInt(0);
      index_space[1] = json_index_space.getInt(1);
@@ -136,12 +136,13 @@ void Manage_file(String mode){
        JSONArray line = json_game_board.getJSONArray(i);
        for (int j =0;j < 4;j++) {
          game_board[i][j] = line.getString(j);
-         println(game_board[i][j]);
        }
      }
   }
   else if (mode.equals("d")) {
-  
+    save.setJSONArray("index_space",null);
+    save.setJSONArray("game_board",null);
+    saveJSONObject(save, "save.json");
   }
   return;
 }
@@ -191,6 +192,7 @@ void setup(){
  size(800,600);
  frameRate(30);
  shuffle_board();
+ Manage_file("r");
 }
 
 void add_section(){
