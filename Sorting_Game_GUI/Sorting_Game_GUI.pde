@@ -1,8 +1,8 @@
 import java.util.Arrays;
-import java.io.File;
 
 String[][] game_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
 int[] index_space = {2,3};
+String game_mode = "Menu";
 
 void shuffle_board(){
     String[] remember = new String[3];
@@ -41,6 +41,7 @@ void shuffle_board(){
           remember[round%3] = moving;
         }
     }
+    Manage_file("w");
 }
 
 
@@ -90,12 +91,14 @@ void moveChar(String c){
       return;
     }
   }
+  Manage_file("w");
   return;
 }
 
 Boolean checkCondition(){
   String[][] sorted_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
   if (Arrays.deepEquals(game_board, sorted_board)){
+    Manage_file("d");
     return true;
   }
   else{
@@ -103,9 +106,9 @@ Boolean checkCondition(){
   }
 }
 
-void Manage_file(String mode){
+void Manage_file(String game_mode){
   JSONObject save = new JSONObject();
-  if (mode.equals("w")) {
+  if (game_mode.equals("w")) {
     JSONArray json_index_space = new JSONArray();
     json_index_space.setInt(0, index_space[0]);
     json_index_space.setInt(1, index_space[1]);
@@ -116,8 +119,6 @@ void Manage_file(String mode){
       JSONArray line = new JSONArray();
       for (int j =0;j < 4;j++) {
         line.setString(j,game_board[i][j]);
-        System.out.printf("i : %d , j : %d \n",i,j);
-        System.out.println(game_board[i][j]);
       }
       json_game_board.setJSONArray(i,line);
     }
@@ -125,7 +126,7 @@ void Manage_file(String mode){
     save.setJSONArray("game_board",json_game_board);
     saveJSONObject(save, "save.json");
   }
-  else if (mode.equals("r")) {
+  else if (game_mode.equals("r")) {
      save = loadJSONObject("save.json");
      JSONArray json_index_space = save.getJSONArray("index_space");
      index_space[0] = json_index_space.getInt(0);
@@ -139,7 +140,7 @@ void Manage_file(String mode){
        }
      }
   }
-  else if (mode.equals("d")) {
+  else if (game_mode.equals("d")) {
     save.setJSONArray("index_space",null);
     save.setJSONArray("game_board",null);
     saveJSONObject(save, "save.json");
@@ -148,7 +149,7 @@ void Manage_file(String mode){
 }
 
 // ********* GUI's part *********
-void menu_game(){
+void draw_Menu(){
   int rectcolor = 240;
   int rectover = 200;
   if (mouseX >= 250 && mouseX <= 550 && 
@@ -159,7 +160,7 @@ void menu_game(){
     textSize(55);
     text("New game",260,215);
     if(mousePressed){
-      System.out.println("hhahahahahaha");
+      game_mode = "New";
     }
   }
   else if(mouseX >= 250 && mouseX <= 550 && 
@@ -170,32 +171,25 @@ void menu_game(){
     textSize(55);
     text("Continue",280,415);
     if(mousePressed){
-      System.out.println("OHHHHHHHHHHHHHHHHHHHHHHHHH");
+      game_mode = "Continue";
     }
   }
-  else if(!(mouseX >= 250 && mouseX <= 550 && 
-    mouseY >= 350 && mouseY <= 450) && 
-   !(mouseX >= 250 && mouseX <= 550 && 
-    mouseY >= 150 && mouseY <= 250)){
-  background(255);
-  fill(rectcolor);
-  rect(250,150,300,100);
-  rect(250,350,300,100);
-  fill(0,120,50);
-  textSize(55);
-  text("New game",260,215);
-  text("Continue",280,415);
+  else{
+    background(255);
+    fill(rectcolor);
+    rect(250,150,300,100);
+    rect(250,350,300,100);
+    fill(0,120,50);
+    textSize(55);
+    text("New game",260,215);
+    text("Continue",280,415);
+    game_mode = "Menu";
   }
 }
 
-void setup(){
- size(800,600);
- frameRate(30);
- shuffle_board();
- Manage_file("r");
-}
-
-void add_section(){
+void draw_Game(){
+  background(255);
+  if (!checkCondition()) {
    for (int x = 0;x<3;x++){
      int rowx = 0;
      int rowy = 200 * x;
@@ -205,27 +199,41 @@ void add_section(){
        rowx += 200;
      }
    }
-  for(int i = 0;i<game_board.length;i++){
-    for(int j=0;j<game_board[i].length;j++){
-      fill(75,120,255);
-      textSize(120);
-      text(game_board[i][j],65+(200*j),140+(200*i));
+    for(int i = 0;i<game_board.length;i++){
+      for(int j=0;j<game_board[i].length;j++){
+        fill(75,120,255);
+        textSize(120);
+        text(game_board[i][j],65+(200*j),140+(200*i));
+      }
+    }
+     if(mousePressed){
+       String c = onClick(mouseX,mouseY);
+       moveChar(c);
     }
   }
-}
-
-void draw(){
-  background(255);
-  if (!checkCondition()) {
-    add_section();
-    if(mousePressed){
-      String c = onClick(mouseX,mouseY);
-      moveChar(c);
-    }
-  } 
   else {
     fill(255,120,75);
     textSize(240);
     text("WIN",200,400);
+  }
+}
+
+void setup(){
+ size(800,600);
+ frameRate(60);
+ shuffle_board();
+}
+
+void draw() {
+  switch(game_mode) {
+  case "Menu":
+    draw_Menu();
+    break;
+  case "New":
+    draw_Game();
+    break;
+  case "Continue":
+    
+    break;
   }
 }
