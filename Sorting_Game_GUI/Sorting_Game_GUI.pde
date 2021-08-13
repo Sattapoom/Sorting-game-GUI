@@ -126,6 +126,19 @@ void Manage_file(String mode){
   }
   else if (mode.equals("r")) {
      save = loadJSONObject("save.json");
+     
+     JSONArray json_index_space = save.getJSONArray("index_space");
+     index_space[0] = json_index_space.getInt(0);
+     index_space[1] = json_index_space.getInt(1);
+     
+     JSONArray json_game_board = save.getJSONArray("game_board");
+     for (int i =0;i < 3;i++) {
+       JSONArray line = json_game_board.getJSONArray(i);
+       for (int j =0;j < 4;j++) {
+         game_board[i][j] = line.getString(j);
+         println(game_board[i][j]);
+       }
+     }
   }
   else if (mode.equals("d")) {
   
@@ -178,7 +191,6 @@ void setup(){
  size(800,600);
  frameRate(30);
  shuffle_board();
- Manage_file("w");
 }
 
 void add_section(){
