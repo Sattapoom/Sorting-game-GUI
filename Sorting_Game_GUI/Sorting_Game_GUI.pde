@@ -102,7 +102,14 @@ Boolean checkCondition(){
   }
 }
 
+void Manage_file(String mode){
+  return;
+}
+
 // ********* GUI's part *********
+void menu_game(){
+  return;
+}
 
 void setup(){
  size(800,600);
