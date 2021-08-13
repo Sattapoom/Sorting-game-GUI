@@ -1,9 +1,6 @@
 import java.util.Arrays;
 
-int size_x = 800;
-int size_y = 600;
 String[][] game_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
-String[][] sorted_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
 int[] index_space = {2,3};
 
 void shuffle_board(){
@@ -96,6 +93,7 @@ void moveChar(String c){
 }
 
 Boolean checkCondition(){
+  String[][] sorted_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
   if (Arrays.deepEquals(game_board, sorted_board)){
     return true;
   }
@@ -108,7 +106,7 @@ Boolean checkCondition(){
 
 void setup(){
  size(800,600);
- frameRate(10);
+ frameRate(30);
  shuffle_board();
 }
 
