@@ -103,6 +103,33 @@ Boolean checkCondition(){
 }
 
 void Manage_file(String mode){
+  JSONObject save = new JSONObject();
+  if (mode.equals("w")) {
+    JSONArray json_index_space = new JSONArray();
+    json_index_space.setInt(0, index_space[0]);
+    json_index_space.setInt(1, index_space[1]);
+    save.setJSONArray("index_space",json_index_space);
+    
+    JSONArray json_game_board = new JSONArray();
+    for (int i =0;i < 3;i++) {
+      JSONArray line = new JSONArray();
+      for (int j =0;j < 4;j++) {
+        line.setString(j,game_board[i][j]);
+        System.out.printf("i : %d , j : %d \n",i,j);
+        System.out.println(game_board[i][j]);
+      }
+      json_game_board.setJSONArray(i,line);
+    }
+    
+    save.setJSONArray("game_board",json_game_board);
+    saveJSONObject(save, "save.json");
+  }
+  else if (mode.equals("r")) {
+     save = loadJSONObject("save.json");
+  }
+  else if (mode.equals("d")) {
+  
+  }
   return;
 }
 
@@ -151,6 +178,7 @@ void setup(){
  size(800,600);
  frameRate(30);
  shuffle_board();
+ Manage_file("w");
 }
 
 void add_section(){
