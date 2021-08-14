@@ -41,7 +41,6 @@ void shuffle_board(){
           remember[round%3] = moving;
         }
     }
-    Manage_file("w");
 }
 
 
@@ -50,7 +49,6 @@ String onClick(int mouse_x,int mouse_y){
   int row,col;
   row = (int)mouse_y/200;
   col = (int)mouse_x/200;
-  
   return game_board[row][col];
 }
 
@@ -91,7 +89,6 @@ void moveChar(String c){
       return;
     }
   }
-  Manage_file("w");
   return;
 }
 
@@ -149,45 +146,50 @@ void Manage_file(String game_mode){
 }
 
 // ********* GUI's part *********
-void draw_Menu(){
+void draw_Menu(Boolean click_status){
+  JSONObject save = loadJSONObject("save.json");
   int rectcolor = 240;
   int rectover = 200;
+  textSize(55);
   if (mouseX >= 250 && mouseX <= 550 && 
     mouseY >= 150 && mouseY <= 250) {
     fill(rectover);
     rect(250,150,300,100);
     fill(0,120,50);
-    textSize(55);
     text("New game",260,215);
-    if(mousePressed){
-      game_mode = "New";
+    if(click_status){
+      game_mode = "Play";
     }
   }
   else if(mouseX >= 250 && mouseX <= 550 && 
-    mouseY >= 350 && mouseY <= 450) {
+    mouseY >= 350 && mouseY <= 450 && !(save.isNull("index_space") && save.isNull("game_board"))) {
     fill(rectover);
     rect(250,350,300,100);
     fill(0,120,50);
-    textSize(55);
     text("Continue",280,415);
-    if(mousePressed){
+    if(click_status){
       game_mode = "Continue";
+
     }
   }
   else{
     background(255);
     fill(rectcolor);
     rect(250,150,300,100);
-    rect(250,350,300,100);
     fill(0,120,50);
-    textSize(55);
     text("New game",260,215);
-    text("Continue",280,415);
+    
+    if(!(save.isNull("index_space") && save.isNull("game_board"))){
+      fill(rectcolor);
+      rect(250,350,300,100);
+      fill(0,120,50);
+      text("Continue",280,415);
+    }
     game_mode = "Menu";
   }
 }
 
-void draw_Game(){
+void draw_Game(Boolean click_status){
   background(255);
   if (!checkCondition()) {
    for (int x = 0;x<3;x++){
@@ -206,7 +208,7 @@ void draw_Game(){
         text(game_board[i][j],65+(200*j),140+(200*i));
       }
     }
-     if(mousePressed){
+     if(game_mode.equals("Play") && click_status){   
        String c = onClick(mouseX,mouseY);
        moveChar(c);
     }
@@ -215,6 +217,17 @@ void draw_Game(){
     fill(255,120,75);
     textSize(240);
     text("WIN",200,400);
+    game_mode = "None";
+  }
+  game_mode = "Play";
+}
+void mouseReleased() {
+  if(game_mode.equals("Menu")){
+    draw_Menu(true);
+  }
+  else if(game_mode.equals("Play")){
+    draw_Game(true);
+    Manage_file("w");
   }
 }
 
@@ -227,13 +240,14 @@ void setup(){
 void draw() {
   switch(game_mode) {
   case "Menu":
-    draw_Menu();
+    draw_Menu(false);
     break;
-  case "New":
-    draw_Game();
+  case "Play":
+    draw_Game(false);
     break;
   case "Continue":
-    
+    Manage_file("r");
+    game_mode = "Play";
     break;
   }
 }
