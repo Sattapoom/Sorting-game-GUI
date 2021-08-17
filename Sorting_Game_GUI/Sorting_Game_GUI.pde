@@ -104,50 +104,40 @@ Boolean checkCondition(){
 }
 
 void Manage_file(String game_mode){
-  JSONObject save = new JSONObject();
   if (game_mode.equals("w")) {
-    JSONArray json_index_space = new JSONArray();
-    json_index_space.setInt(0, index_space[0]);
-    json_index_space.setInt(1, index_space[1]);
-    save.setJSONArray("index_space",json_index_space);
-    
-    JSONArray json_game_board = new JSONArray();
-    for (int i =0;i < 3;i++) {
-      JSONArray line = new JSONArray();
-      for (int j =0;j < 4;j++) {
-        line.setString(j,game_board[i][j]);
+    String[] data = {""};
+    for (int i=0;i < 3;i++) {
+      for (int j=0;j < 4;j++) {
+        data[0] += game_board[i][j] + ",";
       }
-      json_game_board.setJSONArray(i,line);
     }
-    
-    save.setJSONArray("game_board",json_game_board);
-    saveJSONObject(save, "save.json");
+    saveStrings("save.csv", data);
   }
   else if (game_mode.equals("r")) {
-     save = loadJSONObject("save.json");
-     JSONArray json_index_space = save.getJSONArray("index_space");
-     index_space[0] = json_index_space.getInt(0);
-     index_space[1] = json_index_space.getInt(1);
-     
-     JSONArray json_game_board = save.getJSONArray("game_board");
-     for (int i =0;i < 3;i++) {
-       JSONArray line = json_game_board.getJSONArray(i);
-       for (int j =0;j < 4;j++) {
-         game_board[i][j] = line.getString(j);
-       }
-     }
+    String[] data = loadStrings("save.csv");
+    String[] list = split(data[0], ',');
+    int index = 0;
+    for (int i=0;i < 3;i++) {
+      for (int j=0;j < 4;j++) {
+        game_board[i][j] = list[index];
+        index += 1;
+        if (game_board[i][j].equals(" ")) {
+          index_space[0] = i;
+          index_space[1] = j;
+        }
+      }
+    }
   }
   else if (game_mode.equals("d")) {
-    save.setJSONArray("index_space",null);
-    save.setJSONArray("game_board",null);
-    saveJSONObject(save, "save.json");
+    String[] data = {"A,B,C,D,E,F,G,H,I,J,K"};
+    saveStrings("save.csv", data);
   }
   return;
 }
 
 // ********* GUI's part *********
 void draw_Menu(Boolean click_status){
-  JSONObject save = loadJSONObject("save.json");
+  String[] save = loadStrings("save.csv");
   int rectcolor = 240;
   int rectover = 200;
   textSize(55);
@@ -162,14 +152,13 @@ void draw_Menu(Boolean click_status){
     }
   }
   else if(mouseX >= 250 && mouseX <= 550 && 
-    mouseY >= 350 && mouseY <= 450 && !(save.isNull("index_space") && save.isNull("game_board"))) {
+    mouseY >= 350 && mouseY <= 450 && !(save[0].equals("A,B,C,D,E,F,G,H,I,J,K, ,"))) {
     fill(rectover);
     rect(250,350,300,100);
     fill(0,120,50);
     text("Continue",280,415);
     if(click_status){
       game_mode = "Continue";
-
     }
   }
   else{
@@ -179,7 +168,7 @@ void draw_Menu(Boolean click_status){
     fill(0,120,50);
     text("New game",260,215);
     
-    if(!(save.isNull("index_space") && save.isNull("game_board"))){
+    if(!(save[0].equals("A,B,C,D,E,F,G,H,I,J,K, ,"))){
       fill(rectcolor);
       rect(250,350,300,100);
       fill(0,120,50);
