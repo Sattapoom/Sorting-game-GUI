@@ -42,16 +42,12 @@ void shuffle_board(){
         }
     }
 }
-
-
 String onClick(int mouse_x,int mouse_y){
-  
   int row,col;
   row = (int)mouse_y/200;
   col = (int)mouse_x/200;
   return game_board[row][col];
 }
-
 void moveChar(String c){
   int topIndex = index_space[0] - 1;
   if (topIndex >= 0) {
@@ -95,7 +91,8 @@ void moveChar(String c){
 Boolean checkCondition(){
   String[][] sorted_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
   if (Arrays.deepEquals(game_board, sorted_board)){
-    Manage_file("d");
+    //Manage_file_csv("d");
+    Manage_file_xml("d");
     return true;
   }
   else{
@@ -103,7 +100,7 @@ Boolean checkCondition(){
   }
 }
 
-void Manage_file(String game_mode){
+void Manage_file_csv(String game_mode){
   if (game_mode.equals("w")) {
     String[] data = {""};
     for (int i=0;i < 3;i++) {
@@ -134,10 +131,59 @@ void Manage_file(String game_mode){
   }
   return;
 }
-
+void Manage_file_xml(String mode) {
+  if (mode.equals("w")) {
+    String data = "<?xml version='1.0' encoding='UTF-8'?><ABCBlockMAP><Map>";
+    for (int i =1;i<4;i++) {
+      String openTag = "<row" + String.valueOf(i) + ">"; 
+      data += openTag;
+      for (int j =0;j<4;j++) {
+        data += game_board[i-1][j];
+      }
+      String closeTag = "</row" + String.valueOf(i) + ">";
+      data += closeTag;
+    }
+    data += "</Map></ABCBlockMAP>";
+    XML xml = parseXML(data);
+    saveXML(xml, "save.xml");
+  }
+  else if (mode.equals("r")) {
+    XML xml = loadXML("save.xml");
+    XML[] Map = xml.getChildren("Map");
+    for (int i=0;i<3;i++) { 
+      XML[] rowXML = Map[0].getChildren("row" + String.valueOf(i+1));
+      String row = rowXML[0].getContent();
+      String[] ch = row.split("");
+      for (int j=0;j<4;j++) { 
+        game_board[i][j] = ch[j];
+        if (game_board[i][j].equals(" ")) {
+          index_space[0] = i;
+          index_space[1] = j;
+        }
+      }
+    }
+  }
+  else if (mode.equals("d")) {
+    String[][] sorted_board = {{"A","B","C","D"}, {"E","F","G","H"}, {"I","J","K"," "}};
+    String data = "<?xml version='1.0' encoding='UTF-8'?><ABCBlockMAP><Map>";
+    for (int i =1;i<4;i++) {
+      String openTag = "<row" + String.valueOf(i) + ">"; 
+      data += openTag;
+      for (int j =0;j<4;j++) {
+        data += sorted_board[i-1][j];
+      }
+      String closeTag = "</row" + String.valueOf(i) + ">";
+      data += closeTag;
+    }
+    data += "</Map></ABCBlockMAP>";
+    XML xml = parseXML(data);
+    saveXML(xml, "save.xml");
+  }
+}
 // ********* GUI's part *********
 void draw_Menu(Boolean click_status){
-  String[] save = loadStrings("save.csv");
+  //String[] save = loadStrings("save.csv");
+  Manage_file_xml("r");
   int rectcolor = 240;
   int rectover = 200;
   textSize(55);
@@ -148,11 +194,13 @@ void draw_Menu(Boolean click_status){
     fill(0,120,50);
     text("New game",260,215);
     if(click_status){
+      shuffle_board();
+      Manage_file_xml("w");
       game_mode = "Play";
     }
   }
   else if(mouseX >= 250 && mouseX <= 550 && 
-    mouseY >= 350 && mouseY <= 450 && !(save[0].equals("A,B,C,D,E,F,G,H,I,J,K, ,"))) {
+    mouseY >= 350 && mouseY <= 450 && !(checkCondition())) {
     fill(rectover);
     rect(250,350,300,100);
     fill(0,120,50);
@@ -168,7 +216,7 @@ void draw_Menu(Boolean click_status){
     fill(0,120,50);
     text("New game",260,215);
     
-    if(!(save[0].equals("A,B,C,D,E,F,G,H,I,J,K, ,"))){
+    if(!(checkCondition())){
       fill(rectcolor);
       rect(250,350,300,100);
       fill(0,120,50);
@@ -216,14 +264,14 @@ void mouseReleased() {
   }
   else if(game_mode.equals("Play")){
     draw_Game(true);
-    Manage_file("w");
+    //Manage_file_csv("w");
+    Manage_file_xml("w");
   }
 }
 
 void setup(){
  size(800,600);
  frameRate(60);
- shuffle_board();
 }
 
 void draw() {
@@ -235,7 +283,8 @@ void draw() {
     draw_Game(false);
     break;
   case "Continue":
-    Manage_file("r");
+    //Manage_file_csv("r");
+    Manage_file_xml("r");
     game_mode = "Play";
     break;
   }
