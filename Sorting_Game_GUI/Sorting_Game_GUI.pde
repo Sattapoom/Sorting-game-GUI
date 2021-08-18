@@ -149,6 +149,9 @@ void Manage_file_xml(String mode) {
   }
   else if (mode.equals("r")) {
     XML xml = loadXML("save.xml");
+    if(xml == null){
+    return;
+    }
     XML[] Map = xml.getChildren("Map");
     for (int i=0;i<3;i++) { 
       XML[] rowXML = Map[0].getChildren("row" + String.valueOf(i+1));
